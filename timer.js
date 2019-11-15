@@ -1,30 +1,44 @@
-function Stopwatch(elem) {
-  let time = 0
-  let offset
-  let interval
-
-  function update() {
-    if (this.isOn) {
-      time += delta()
-    }
-    elem.textContent = timeFormatter(time)
+class Stopwatch {
+  constructor(timerField) {
+    this.time = 0
+    this.offset = 0
+    this.interval = 0
+    this.isOn = false
+    this.timerField = timerField
   }
+  // controllers methods
+  start() {
+    this.interval = setInterval(() => {
+      this.update()
+    }, 10)
+    this.offset = Date.now()
+    this.isOn = true
+  }
+  stop() {
+    clearInterval(this.interval)
+    this.interval = null
+    this.isOn = false
+  }
+  reset() {
+    this.time = 0
+    this.update()
+  }
+  // logic methods
+  update() {
+    if (this.isOn) {
+      this.time += this.incrementedTimer()
+    }
+    this.timerField.textContent = this.timeFormatter()
+  }
+  incrementedTimer() {
+    const now = Date.now()
+    const timePassed = now - this.offset
 
-  function delta() {
-    let now = Date.now()
-    let timePassed = now - offset
-
-    offset = now
-
+    this.offset = now
     return timePassed
   }
-
-
-
-
-  function timeFormatter(time) {
-    time = new Date(time)
-
+  timeFormatter() {
+    const time = new Date(this.time)
     let minutes = time.getMinutes().toString()
     let seconds = time.getSeconds().toString()
     let milliseconds = time.getMilliseconds().toString()
@@ -38,35 +52,16 @@ function Stopwatch(elem) {
     while (milliseconds.length < 3) {
       milliseconds = '0' + milliseconds
     }
-    return minutes + ' : ' + seconds + ' . ' + milliseconds
+    return `${minutes}:${seconds}.${milliseconds}`
   }
-
-
-
-
-  this.start = function() {
-    interval = setInterval(update.bind(this), 10)
-    offset = Date.now()
-    this.isOn = true
-  }
-  this.stop = function() {
-    clearInterval(interval)
-    interval = null
-    this.isOn = false
-  }
-  this.reset = function() {
-    time = 0;
-    update();
-  }
-  this.isOn = false
 }
 
 
-let timer = document.getElementById('timer')
-let toggleBtn = document.getElementById('toggle')
-let resetBtn = document.getElementById('reset')
+const timer = document.getElementById('timer')
+const toggleBtn = document.getElementById('toggle')
+const resetBtn = document.getElementById('reset')
 
-let watch = new Stopwatch(timer)
+const watch = new Stopwatch(timer)
 
 function start() {
   toggleBtn.textContent = 'Stop'
