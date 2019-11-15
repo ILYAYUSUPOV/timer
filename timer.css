@@ -13,6 +13,8 @@ body {
 }
 #timer {
   font-size: 50px;
+  position: absolute;
+  top: 390px;
 }
 .timer_img {
   width: 50%;
